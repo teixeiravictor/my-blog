@@ -1,6 +1,8 @@
 import Image from "next/image";
 import * as S from "./styled";
 
+import SocialLinks from "components/SocialLinks";
+
 const SectionHero = () => (
   <S.Wrapper>
     <S.Container>
@@ -11,6 +13,7 @@ const SectionHero = () => (
           love to create things that make people's lives better. It's make me
           happy to be here. Also, I'm a big fan of the web.
         </S.Description>
+        <SocialLinks />
       </S.Info>
       <S.Picture>
         <S.FloatAnimation>
