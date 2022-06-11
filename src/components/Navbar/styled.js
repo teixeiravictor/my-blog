@@ -20,7 +20,7 @@ export const Wrapper = styled.div`
 export const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 `;
 
@@ -31,7 +31,7 @@ export const NavbarGroup = styled.ul`
 
 export const NavbarItem = styled.li`
   ${({ theme }) => css`
-    margin-right: ${theme.spacings.medium};
+    margin-left: ${theme.spacings.medium};
   `}
 `;
 
