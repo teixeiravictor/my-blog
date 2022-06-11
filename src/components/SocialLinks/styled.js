@@ -16,7 +16,7 @@ export const SocialLink = styled.a`
   transition: ${transitions.ALL};
 
   &:hover {
-    color: ${({ theme }) => theme.colors.secondary};
+    color: ${({ theme }) => theme.colors.darkSecondary};
   }
 `;
 
