@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 
 import transitions from "styles/transitions";
+import media from "styles/media";
 
 export const Wrapper = styled.div`
   ${({ theme }) => css`
@@ -26,6 +27,7 @@ export const Title = styled.h1`
 export const CategoryList = styled.ul`
   ${({ theme }) => css`
     display: flex;
+    flex-wrap: wrap;
     width: 100%;
     margin: ${theme.spacings.medium} 0;
   `}
@@ -49,22 +51,35 @@ export const Category = styled.li`
     font-weight: ${theme.font.bold};
 
     margin-right: ${theme.spacings.xsmall};
+    margin-bottom: ${theme.spacings.xsmall};
     padding: ${theme.spacings.xxsmall} ${theme.spacings.xsmall};
 
     transition: ${transitions.COLOR};
 
-    &:hover {
+    &:focus {
       background-color: ${theme.colors.primary};
       color: ${theme.colors.secondary};
     }
+
+    ${media.desktop`
+      &:hover {
+        background-color: ${theme.colors.secondary};
+        color: ${theme.colors.primary};
+      }
+    `}
   `}
 `;
 
 export const ArticlesWrapper = styled.div`
   ${({ theme }) => css`
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-column-gap: ${theme.spacings.medium};
-    grid-row-gap: ${theme.spacings.medium};
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    grid-row-gap: ${theme.spacings.xsmall};
+
+    ${media.tablet`
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-column-gap: ${theme.spacings.medium};
+      grid-row-gap: ${theme.spacings.medium};
+    `};
   `}
 `;

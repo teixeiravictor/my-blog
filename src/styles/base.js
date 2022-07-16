@@ -1,21 +1,31 @@
 import styled, { css } from "styled-components";
 import transitions from "styles/transitions";
 
+import media from "styles/media";
+
 export const PostWrapper = styled.div`
   ${({ theme }) => css`
     display: grid;
-    /* grid-template-columns: 1fr; mobile */
-    grid-template-columns: 1fr 50ch 1fr;
+    grid-template-columns: 1fr;
     gap: 3rem;
     margin: 0 auto;
     max-width: ${theme.grid.container};
-    padding: ${theme.spacings.medium};
+    padding: ${theme.spacings.small};
     width: 100%;
+
+    ${media.desktop`
+      padding: ${theme.spacings.medium};
+      grid-template-columns: 1fr 50ch 1fr;
+    `};
   `}
 `;
 
 export const PostContainer = styled.div`
-  grid-column: 2/3;
+  grid-column: 1;
+
+  ${media.desktop`
+    grid-column: 2/3;
+  `};
 `;
 
 export const PostHeader = styled.header`
@@ -27,10 +37,14 @@ export const PostHeader = styled.header`
 
 export const PostAside = styled.aside`
   ${({ theme }) => css`
-    margin: ${theme.spacings.xsmall} auto;
+    margin: 0 ${theme.spacings.xsmall};
     align-self: start;
-    position: sticky;
-    top: ${theme.spacings.xsmall};
+
+    ${media.desktop`
+      margin: ${theme.spacings.xsmall} auto;
+      position: sticky;
+      top: ${theme.spacings.xsmall};
+    `};
   `}
 `;
 
@@ -40,7 +54,11 @@ export const PostTitle = styled.h1`
     font-size: 4rem;
     font-weight: 700;
     padding: 0 ${theme.spacings.xsmall};
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+
+    ${media.desktop`
+      margin-bottom: 1rem;
+    `};
   `}
 `;
 
@@ -56,7 +74,7 @@ export const PostDescription = styled.h2`
 export const BackLink = styled.a`
   ${({ theme }) => css`
     color: ${theme.colors.white};
-    font-size: ${theme.font.sizes.xxsmall};
+    font-size: ${theme.font.sizes.xsmall};
     margin: ${theme.spacings.medium} 0;
     transition: ${transitions.COLOR};
     text-decoration: none;
@@ -65,20 +83,32 @@ export const BackLink = styled.a`
     &:hover {
       color: ${theme.colors.darkSecondary};
     }
+
+    ${media.desktop`
+      font-size: ${theme.font.sizes.xxsmall};
+    `};
   `}
 `;
 
 export const PostDate = styled.p`
   ${({ theme }) => css`
-    font-size: ${theme.font.sizes.xxxsmall};
+    font-size: ${theme.font.sizes.xxsmall};
+
+    ${media.desktop`
+      font-size: ${theme.font.sizes.xxxsmall};
+    `};
   `}
 `;
 
 export const PostAuthor = styled.p`
   ${({ theme }) => css`
-    font-size: ${theme.font.sizes.xxsmall};
+    font-size: ${theme.font.sizes.xsmall};
     font-weight: ${theme.font.bold};
     margin-bottom: ${theme.spacings.xxsmall};
+
+    ${media.desktop`
+      font-size: ${theme.font.sizes.xxsmall};
+    `};
   `}
 `;
 
@@ -100,8 +130,12 @@ export const MainContent = styled.section`
       color: ${theme.colors.white};
       font-size: ${theme.font.sizes.xxsmall};
       font-weight: 400;
-      line-height: ${theme.font.lineHeight.xlarge};
+      line-height: ${theme.font.lineHeight.large};
       padding: 0 ${theme.spacings.xsmall};
+
+      ${media.desktop`
+        line-height: ${theme.font.lineHeight.xlarge};
+      `};
     }
 
     p {
