@@ -19,6 +19,7 @@ export default {
       medium: "1.2",
       large: "1.5",
       xlarge: "1.7",
+      xxlarge: "2.4",
     },
     sizes: {
       xxxsmall: "1.2rem",
