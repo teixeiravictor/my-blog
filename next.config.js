@@ -6,8 +6,8 @@ const nextConfig = {
     styledComponents: true,
   },
   i18n: {
-    locales: ["en", "pt-br"],
-    defaultLocale: "pt-br",
+    locales: ["en", "pt"],
+    defaultLocale: "pt",
   },
 };
 
