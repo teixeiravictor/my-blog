@@ -22,7 +22,10 @@ export async function getStaticProps({ params }) {
 
 export async function getStaticPaths() {
   const articles = getAllArticles();
-  const paths = articles.map(({ slug }) => ({ params: { slug } }));
+  const paths = articles.map(({ slug, locale }) => ({
+    params: { slug },
+    locale,
+  }));
 
   return {
     paths,
