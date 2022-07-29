@@ -1,12 +1,12 @@
 ---
-lang: en
-title: "10 hidden gems in JavaScript"
-excerpt: "After working with JavaScript for many years, these are my absolute favorite features you might not know about."
-createdAt: "2021-05-06"
+lang: pt
+title: "Artigo em português"
+excerpt: "This is my first blog post."
+createdAt: "2021-05-03"
 tags:
   - dev
-  - método cientifico
-categories: algoritmos
+  - teste
+categories: engenharia de software
 author: Victor Menezes
 ---
 

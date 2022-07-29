@@ -1,4 +1,5 @@
 ---
+lang: en
 title: "Styling React with Tailwind CSS"
 excerpt: "This tutorial shows you how to set up Tailwind in your React applications."
 createdAt: "2021-05-05"

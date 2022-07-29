@@ -1,4 +1,5 @@
 ---
+lang: en
 title: "Hello World!"
 excerpt: "This is my first blog post."
 createdAt: "2021-05-03"
