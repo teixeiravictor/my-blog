@@ -22,6 +22,7 @@ export function getArticleBySlug(slug) {
 
   return {
     slug: realSlug,
+    locale: data.lang,
     permalink: `/articles/${realSlug}`,
     frontmatter: { ...data },
     content,
