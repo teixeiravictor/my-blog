@@ -1,4 +1,5 @@
 ---
+lang: en
 title: "Multi-author blog in Next.js"
 excerpt: "This article explains how we can connect different types of content in a Next.js application."
 createdAt: "2021-05-04"

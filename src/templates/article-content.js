@@ -1,6 +1,8 @@
 import Prism from "prismjs";
 
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { FormattedMessage, useIntl } from "react-intl";
 import { useEffect } from "react";
 import { NextSeo } from "next-seo";
 
@@ -24,6 +26,10 @@ const ArticleContent = ({ article }) => {
     Prism.highlightAll();
   }, [article]);
 
+  const { formatMessage: f } = useIntl();
+  const router = useRouter();
+  const { locale } = router;
+
   return (
     <>
       <NextSeo
@@ -39,11 +45,12 @@ const ArticleContent = ({ article }) => {
         <PostAside>
           <PostAuthor>{article.frontmatter.author}</PostAuthor>
           <PostDate>
-            {prettyDate(article.frontmatter.createdAt)} •{" "}
-            {timeToRead(article.content)}
+            {prettyDate(article.frontmatter.createdAt, locale)} - {timeToRead(article.content)} {f({ id: "timeToRead" })}
           </PostDate>
           <Link href="/articles" passHref>
-            <BackLink>← Voltar na listagem</BackLink>
+            <BackLink>
+              <FormattedMessage id="backToArticles" />
+            </BackLink>
           </Link>
         </PostAside>
         <PostContainer>

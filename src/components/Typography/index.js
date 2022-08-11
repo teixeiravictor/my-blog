@@ -1,8 +1,12 @@
+import { FormattedMessage } from "react-intl";
+
 import * as S from "./styled";
 
 const Typography = () => (
   <S.Wrapper>
-    <S.Title>UI / Typography</S.Title>
+    <S.Title>
+      <FormattedMessage id="uiTypography" />
+    </S.Title>
     <S.Heading1>H1 - Heading 1</S.Heading1>
     <S.Heading2>H2 - Heading 2</S.Heading2>
     <S.Heading3>H3 - Heading 3</S.Heading3>

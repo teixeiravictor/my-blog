@@ -1,4 +1,6 @@
 import { useState, useMemo } from "react";
+import { FormattedMessage } from "react-intl";
+import { useRouter } from "next/router";
 import { unique } from "lib/utils";
 
 import * as S from "./styled";
@@ -6,6 +8,9 @@ import Article from "components/Article";
 
 const SectionArticles = ({ articles }) => {
   const [currentCategory, setCurrentCategory] = useState("");
+
+  const router = useRouter();
+  const { locale } = router;
 
   const handleCategory = (category) => {
     setCurrentCategory(category);
@@ -18,7 +23,8 @@ const SectionArticles = ({ articles }) => {
   );
 
   const articleList = articles.filter(
-    (article) => article.frontmatter.categories !== null
+    (article) =>
+      article.frontmatter.categories !== null && article.locale === locale
   );
 
   const categories = articleList
@@ -33,19 +39,21 @@ const SectionArticles = ({ articles }) => {
   const filteredArticles = useMemo(
     () =>
       currentCategory ? getArticlesByCategory(currentCategory) : articleList,
-    [currentCategory]
+    [currentCategory, locale]
   );
 
   return (
     <S.Wrapper>
       <S.Container>
-        <S.Title>Articles</S.Title>
+        <S.Title>
+          <FormattedMessage id="articlesTitle" />
+        </S.Title>
         <S.CategoryList>
           <S.Category
             active={currentCategory === ""}
             onClick={() => handleCategory("")}
           >
-            Todos
+            <FormattedMessage id="allCategories" />
           </S.Category>
           {categories.map((category, i) => (
             <S.Category
