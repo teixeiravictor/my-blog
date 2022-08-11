@@ -1,11 +1,12 @@
 ---
-title: "Hello World!"
-excerpt: "This is my first blog post."
-createdAt: "2021-05-03"
+lang: en
+title: "10 hidden gems in JavaScript"
+excerpt: "After working with JavaScript for many years, these are my absolute favorite features you might not know about."
+createdAt: "2021-05-06"
 tags:
   - dev
-  - teste
-categories: engenharia de software
+  - método cientifico
+categories: algoritmos
 author: Victor Menezes
 ---
 

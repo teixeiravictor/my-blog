@@ -1,12 +1,37 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-
-import links from "./content";
+import { useIntl } from "react-intl";
 
 import * as S from "./styled";
 
+import LocaleSwitcher from "components/LocaleSwitcher";
+
 const Navbar = () => {
   const router = useRouter();
+  const { formatMessage: f } = useIntl();
+
+  const links = [
+    {
+      label: f({ id: "navBarHome" }),
+      url: "/",
+      title: f({ id: "navBarHomeTitle" }),
+    },
+    {
+      label: f({ id: "navBarArticles" }),
+      url: "/articles",
+      title: f({ id: "navBarArticlesTitle" }),
+    },
+    {
+      label: f({ id: "navBarContact" }),
+      url: "/contact",
+      title: f({ id: "navBarContactTitle" }),
+    },
+    {
+      label: f({ id: "navBarStyleGuide" }),
+      url: "/style-guide",
+      title: f({ id: "navBarStyleGuideTitle" }),
+    },
+  ];
 
   return (
     <S.Background>
@@ -25,6 +50,7 @@ const Navbar = () => {
                 </Link>
               </S.NavbarItem>
             ))}
+            <LocaleSwitcher />
           </S.NavbarGroup>
         </S.Container>
       </S.Wrapper>

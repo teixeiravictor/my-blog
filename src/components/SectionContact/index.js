@@ -1,19 +1,22 @@
+import { FormattedMessage } from "react-intl";
+
 import * as S from "./styled";
 
 const SectionContact = () => (
   <S.Wrapper>
     <S.Container>
-      <S.Title>Contact</S.Title>
+      <S.Title>
+        <FormattedMessage id="contactTitle" />
+      </S.Title>
       <S.Content>
-        Sinta-se à vontade para me perguntar o que quiser. Qualquer dúvida serei
-        grato em ajudar. Se estiver procurando por algo específico, ou se tiver
-        alguma dificuldade.
+        <FormattedMessage id="contactContent" />
       </S.Content>
       <S.Box>
-        <S.BoxTitle>Só quer dizer oi?</S.BoxTitle>
+        <S.BoxTitle>
+          <FormattedMessage id="contactBoxTitle" />
+        </S.BoxTitle>
         <S.BoxContent>
-          Se houver alguma dúvida, basta escrever para mim. Ou, caso queira
-          tratar de outro assunto.
+          <FormattedMessage id="contactBoxContent" />
         </S.BoxContent>
         <S.BoxLabel>
           <S.Link href="mailto:victormenezes8990@gmail.com">

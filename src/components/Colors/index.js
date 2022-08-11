@@ -1,3 +1,5 @@
+import { FormattedMessage } from "react-intl";
+
 import content from "./content";
 import * as S from "./styled";
 
@@ -10,7 +12,9 @@ const Colors = () => {
   return (
     <S.Wrapper>
       <S.Container>
-        <S.Title>UI / Colors</S.Title>
+        <S.Title>
+          <FormattedMessage id="uiColors" />
+        </S.Title>
         <S.ColorWrapper>
           {primary.colors.map((color) => (
             <S.ColorBox key={color.name}>

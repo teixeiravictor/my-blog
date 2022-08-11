@@ -5,8 +5,8 @@ const Articles = ({ articles }) => <SectionArticles articles={articles} />;
 
 export default Articles;
 
-export async function getStaticProps() {
-  const articles = getAllArticles();
+export async function getStaticProps({ locales }) {
+  const articles = getAllArticles(locales);
 
   return {
     props: {
