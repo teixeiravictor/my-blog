@@ -7,9 +7,9 @@ const Article = (article) => <ArticleContent article={article} />;
 
 export default Article;
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params, locale }) {
   const slug = params.slug;
-  const article = getArticleBySlug(slug);
+  const article = getArticleBySlug(slug, locale);
   const content = await markdownToHtml(article.content || "");
 
   return {
@@ -20,8 +20,8 @@ export async function getStaticProps({ params }) {
   };
 }
 
-export async function getStaticPaths() {
-  const articles = getAllArticles();
+export async function getStaticPaths({ locales }) {
+  const articles = getAllArticles(locales);
   const paths = articles.map(({ slug, locale }) => ({
     params: { slug },
     locale,
