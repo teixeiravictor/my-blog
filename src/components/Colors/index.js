@@ -4,10 +4,7 @@ import content from "./content";
 import * as S from "./styled";
 
 const Colors = () => {
-  const primary = content.find((item) => item.name === "Primary");
-  const secondary = content.find((item) => item.name === "Secondary");
-  const system = content.find((item) => item.name === "System");
-  const text = content.find((item) => item.name === "Text");
+  const findByNameColor = (name) => content.find((item) => item.name === name);
 
   return (
     <S.Wrapper>
@@ -16,7 +13,7 @@ const Colors = () => {
           <FormattedMessage id="uiColors" />
         </S.Title>
         <S.ColorWrapper>
-          {primary.colors.map((color) => (
+          {findByNameColor("Primary").colors.map((color) => (
             <S.ColorBox key={color.name}>
               <S.Color hex={color.hex} />
               <S.ColorName>{color.name}</S.ColorName>
@@ -25,7 +22,7 @@ const Colors = () => {
           ))}
         </S.ColorWrapper>
         <S.ColorWrapper>
-          {secondary.colors.map((color) => (
+          {findByNameColor("Secondary").colors.map((color) => (
             <S.ColorBox key={color.name}>
               <S.Color hex={color.hex} />
               <S.ColorName>{color.name}</S.ColorName>
@@ -34,7 +31,7 @@ const Colors = () => {
           ))}
         </S.ColorWrapper>
         <S.ColorWrapper>
-          {system.colors.map((color) => (
+          {findByNameColor("System").colors.map((color) => (
             <S.ColorBox key={color.name}>
               <S.Color hex={color.hex} />
               <S.ColorName>{color.name}</S.ColorName>
@@ -43,7 +40,7 @@ const Colors = () => {
           ))}
         </S.ColorWrapper>
         <S.ColorWrapper>
-          {text.colors.map((color) => (
+          {findByNameColor("Text").colors.map((color) => (
             <S.ColorBox key={color.name}>
               <S.Color hex={color.hex} />
               <S.ColorName>{color.name}</S.ColorName>
