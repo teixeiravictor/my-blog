@@ -39,7 +39,7 @@ const Navbar = () => {
         <S.Container>
           <S.NavbarGroup>
             {links.map((link, i) => (
-              <S.NavbarItem key={i}>
+              <S.NavbarItem key={i} active={router.pathname == link.url}>
                 <Link href={link.url}>
                   <S.NavbarLink
                     active={router.pathname == link.url}
