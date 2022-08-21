@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 
+import media from "styles/media";
 import transitions from "styles/transitions";
 
 export const Background = styled.div`
@@ -19,20 +20,50 @@ export const Wrapper = styled.div`
 
 export const Container = styled.div`
   display: flex;
-  flex-wrap: wrap;
   justify-content: flex-end;
   align-items: center;
 `;
 
-export const NavbarGroup = styled.ul`
-  display: flex;
-  align-items: center;
+export const NavbarMenu = styled.ul`
+  ${({ theme, open }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: ${theme.colors.secondary};
+    height: 100vh;
+    padding: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: ${transitions.TRANSFORM};
+    transform: ${open ? "translateX(0)" : "translateX(100%)"};
+    z-index: 1;
+    width: 100%;
+
+    ${media.tablet`
+      flex-direction: row;
+      justify-content: flex-end;
+      position: static;
+      height: auto;
+      background: unset;
+      transform: translateX(0);
+      padding: 0;
+    `}
+  `}
 `;
 
 export const NavbarItem = styled.li`
   ${({ theme, active }) => css`
-    margin-left: ${theme.spacings.medium};
-    
+    margin-bottom: ${theme.spacings.small};
+    width: 250px;
+
+    ${media.tablet`
+      margin-bottom: 0;
+      margin-left: ${theme.spacings.medium};
+      width: auto;
+    `}
+
     position: relative;
 
     &::before,
@@ -40,7 +71,7 @@ export const NavbarItem = styled.li`
       content: "";
       position: absolute;
       background: ${theme.colors.primary};
-      transition: transform 0.2s;
+      transition: ${transitions.TRANSFORM};
 
       top: 0;
       width: 2px;
@@ -100,7 +131,7 @@ export const NavbarLink = styled.a`
       content: "";
       position: absolute;
       background: ${theme.colors.primary};
-      transition: transform 0.2s;
+      transition: ${transitions.TRANSFORM};
 
       left: 0;
       width: 100%;
