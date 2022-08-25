@@ -1,11 +1,15 @@
 const links = [
   {
     label: "Github",
-    url: "#",
+    url: "https://github.com/teixeiravictor",
   },
   {
     label: "Linkedin",
-    url: "#",
+    url: "https://www.linkedin.com/in/menezesvictor/",
+  },
+  {
+    label: "RSS",
+    url: "/feed.xml",
   },
 ];
 
