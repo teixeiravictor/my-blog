@@ -139,6 +139,7 @@ export const MainContent = styled.section`
     }
 
     p {
+      word-break: break-all;
       margin: 0 auto ${theme.spacings.xsmall};
     }
 

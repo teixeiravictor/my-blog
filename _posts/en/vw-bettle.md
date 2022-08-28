@@ -16,6 +16,8 @@ author: Victor Menezes
 ## Um pouco de história
 Ao longo dos anos, diferentes tipos de freios foram usados ​​em muitos tipos diferentes de veículos. Desde a invenção da roda (originalmente, roda de disco abaulado), o sistema de frenagem desempenha papel crucial em desacelerar ou parar veículos em movimento, sejam eles elétricos, automotores, de tração animal, ou reboque, por exemplo. Em resumo, o princípio de funcionamento dos freios baseia-se no ato de fricção, isto é, conversão de energia cinética em energia térmica pela aplicação de atrito às partes móveis de um sistema. Em decorrência disso, existem diferentes variações de sistemas de freios. No início do século XX, quando os carros tornaram-se amplamente disponíveis, surgiram os primeiros modelos de sistema de freio baseados em ficção, entre eles, temos o registro histórico de patente por John Stawartz (https://patents.google.com/patent/US96042) em 1910.
 
+![Imagem mostrando primeiro modelo de freio baseado em ficção"](/assets/img/posts/fusca-freio-a-disco/primeiro-modelo.png)
+
 Porém, imagine esse sistema de freio por alavanca em um carro a 80km/h. Simplesmente seria impossível, ou totalmente insano, realizar uma força suficiente para reduzir a velocidade e parar rapidamente em uma situação de emergência. Em decorrência disso, em 1924 temos o desenvolvimento do freio hidráulico pelo engenheiro escocês Malcolm Loughead (mais tarde os direitos de patente foram vendidos para outras empresas, uma das quais Alfred Teves Brake Systems, atual Ate). 
 
 ## Princípio de funcionamento
@@ -32,11 +34,16 @@ Nesse sentido, as intensidades das forças aplicadas são diretamente proporcion
 
 Com isso em mente, quando você pressiona o pedal do freio, seu pé move uma alavanca que força um êmbolo pequeno em um cilindro longo cheio de fluido de freio. No qual multiplicará a força no êmbolo próximo ao disco de freio. Por outro lado, a variação de deslocamento no pedal do freio é maior em relação ao êmbolo da pinça de freio. Uma vez que ela é inversamente proporcional à área. Fazendo com que você tenha um deslocamento maior no pedal de freio.
 
-## Autópsia do freio do Fusca
+![Imagem mostrando sistema freio hidráulico"](/assets/img/posts/fusca-freio-a-disco/sistema-freio-hidraulico.gif)
 
-Esse é o quadro de peças de uma pinça de freio a disco. Note que existe uma borracha que permanece em contato direto com o êmbolo. Ela é o “coração” de funcionamento da pinça. Uma vez pressionado o pedal e, consequentemente, acionado o freio, ela tem o papel de puxar o êmbolo para sua posição inicial. Interessante observar que existe um anel de travamento do êmbolo (6). Ele impede que o êmbolo gire seu eixo e acabe reduzindo a vida útil da borracha.
+## Análise  do freio do Fusca
+
+A imagem abaixo mostra o quadro de peças de uma pinça de freio a disco. Note que existe uma borracha que permanece em contato direto com o êmbolo. Ela é o “coração” de funcionamento da pinça. Uma vez pressionado o pedal e, consequentemente, acionado o freio, ela tem o papel de puxar o êmbolo para sua posição inicial. Interessante observar que existe um anel de travamento do êmbolo (6). Ele impede que o êmbolo gire seu eixo e acabe reduzindo a vida útil da borracha.
 
 Vale lembrar que os primeiros fuscas possuem freios a tambor dianteiros. Deixarei uma animação que mostra em detalhes o seu funcionamento.
+
+![Imagem mostrando freio dianteiro do Fusca"](/assets/img/posts/fusca-freio-a-disco/freio-dianteiro-fusca.jpg)
+
 
 ## Reparo do freio na prática 
 

@@ -18,10 +18,13 @@
     "remark-autolink-headings": "^7.0.1",
     "remark-html": "^15.0.1",
     "remark-slug": "^7.0.1",
+    "sharp": "^0.30.7",
     "styled-components": "^5.3.5",
     "styled-icons": "^10.45.0"
   },
   "devDependencies": {
-    "plop": "^3.1.0"
+    "globby": "^13.1.2",
+    "plop": "^3.1.0",
+    "sitemap": "^7.1.1"
   }
 }

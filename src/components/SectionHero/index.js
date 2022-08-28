@@ -27,7 +27,7 @@ const SectionHero = () => {
               src={`/assets/img/profile.jpeg`}
               width={420}
               height={420}
-              layout="fixed"
+              layout="responsive"
               objectFit="cover"
             />
           </S.FloatAnimation>
