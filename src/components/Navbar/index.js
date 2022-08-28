@@ -10,7 +10,7 @@ import data from "./links";
 import LocaleSwitcher from "components/LocaleSwitcher";
 import NavbarBurguer from "components/NavbarBurguer";
 
-import { useOnClickOutside } from "utils/hooks";
+import { useOnClickOutside } from "lib/hooks";
 
 const Navbar = () => {
   const router = useRouter();
