@@ -6,7 +6,7 @@ createdAt: "2021-05-06"
 tags:
   - dev
   - método cientifico
-categories: algoritmos
+categories: algorithms
 author: Victor Menezes
 ---
 
