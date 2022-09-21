@@ -25,9 +25,13 @@ Porém, imagine esse sistema de freio por alavanca em um carro a 80km/h. Simples
 E a principal vantagem está no uso do Princípio de Pascal, no qual a pressão (P) aplicada sobre um ponto transmite para todos os outros pontos do fluido. E temos que a pressão (P) é definida pela razão entre a força (F) aplicada e sua área de contato (A). Logo, utilizando uma prensa hidráulica, temos que a A1 e A2 possuem pressões P1 e P2, respectivamente, iguais. Temos, então: P1=F1/A1 e P2=F2/A2. E pelo princípio de pascal P2=P1. 
 
 Então: 
+
 F2/A2=F1/A1
+
 F2/F1= A2/A1
+
 Se A2 = 4A1
+
 F2 = 4F1
 
 Nesse sentido, as intensidades das forças aplicadas são diretamente proporcionais às áreas dos êmbolos. Em contrapartida, não teríamos essa vantagem mecânica no sistema de freio através de uma simples alavanca, por exemplo. 
