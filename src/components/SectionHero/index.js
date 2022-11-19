@@ -29,6 +29,7 @@ const SectionHero = () => {
               height={420}
               layout="responsive"
               objectFit="cover"
+              priority
             />
           </S.FloatAnimation>
           <S.Box />
