@@ -1,54 +1,61 @@
 ---
 lang: en
 title: "Brake System - VW Bettle"
-excerpt: "Afinal, como funciona um freio a disco? Precisei reparar o freio dianteiro do fusca e resolvi documentar o processo e explicar como funciona um freio a disco."
+excerpt: "How does a disc brake work? I needed to fix the early break of my VW Beetle and document how to work a disc brake."
 createdAt: "2022-07-29"
 tags:
   - fisica
   - mecanica
   - fusca
-categories: mecânica
+categories: mechanics
 author: Victor Menezes
 ---
 
-# Como funcionam os freios a disco
+# How disc brakes work
 
-## Um pouco de história
-Ao longo dos anos, diferentes tipos de freios foram usados ​​em muitos tipos diferentes de veículos. Desde a invenção da roda (originalmente, roda de disco abaulado), o sistema de frenagem desempenha papel crucial em desacelerar ou parar veículos em movimento, sejam eles elétricos, automotores, de tração animal, ou reboque, por exemplo. Em resumo, o princípio de funcionamento dos freios baseia-se no ato de fricção, isto é, conversão de energia cinética em energia térmica pela aplicação de atrito às partes móveis de um sistema. Em decorrência disso, existem diferentes variações de sistemas de freios. No início do século XX, quando os carros tornaram-se amplamente disponíveis, surgiram os primeiros modelos de sistema de freio baseados em ficção, entre eles, temos o registro histórico de patente por John Stawartz (https://patents.google.com/patent/US96042) em 1910.
+## A little of history
+Over the years, different types of brakes have been used on many different types of vehicles. Since the invention of the wheel (originally, a domed disc wheel), the braking system has played a crucial role in slowing down or stopping moving vehicles, whether electric, self-propelled, animal-drawn, or trailer, for example. In summary, the working principle of brakes is based on the act of friction, that is, the conversion of kinetic energy into thermal energy by applying friction to the moving parts of a system. As a result, there are different variations of brake systems. At the beginning of the 20th century, when cars became widely available, the first fictional brake system models appeared, among them, we have the historical patent registration by John Stawartz (https://patents.google.com/ patent/US96042) in 1910.
 
-![Imagem mostrando primeiro modelo de freio baseado em ficção"](/assets/img/posts/fusca-freio-a-disco/primeiro-modelo.png)
 
-Porém, imagine esse sistema de freio por alavanca em um carro a 80km/h. Simplesmente seria impossível, ou totalmente insano, realizar uma força suficiente para reduzir a velocidade e parar rapidamente em uma situação de emergência. Em decorrência disso, em 1924 temos o desenvolvimento do freio hidráulico pelo engenheiro escocês Malcolm Loughead (mais tarde os direitos de patente foram vendidos para outras empresas, uma das quais Alfred Teves Brake Systems, atual Ate). 
+![Image showing first fiction-based brake model"](/assets/img/posts/fusca-freio-a-disco/primeiro-modelo.png)
 
-## Princípio de funcionamento
+But imagine this lever brake system on a car traveling at 50 mph. It would simply be impossible, or downright insane, to apply enough force to slow down and stop quickly in an emergency situation. As a result, in 1924 we have the development of the hydraulic brake by the Scottish engineer Malcolm Loughead (later the patent rights were sold to other companies, one of which was Alfred Teves Brake Systems, now Ate).
 
-E a principal vantagem está no uso do Princípio de Pascal, no qual a pressão (P) aplicada sobre um ponto transmite para todos os outros pontos do fluido. E temos que a pressão (P) é definida pela razão entre a força (F) aplicada e sua área de contato (A). Logo, utilizando uma prensa hidráulica, temos que a A1 e A2 possuem pressões P1 e P2, respectivamente, iguais. Temos, então: P1=F1/A1 e P2=F2/A2. E pelo princípio de pascal P2=P1. 
+## Working principle
 
-Então: 
+And the main advantage is in the use of Pascal's Principle, in which the pressure (P) applied on a point transmits to all other points of the fluid. And we have that the pressure (P) is defined by the ratio between the applied force (F) and its contact area (A). Therefore, using a hydraulic press, we have that A1 and A2 have equal pressures P1 and P2, respectively. We then have: P1=F1/A1 and P2=F2/A2. And by the pascal principle, P2=P1.
+
+So: 
+
 F2/A2=F1/A1
+
 F2/F1= A2/A1
-Se A2 = 4A1
+
+If A2 = 4A1
+
 F2 = 4F1
 
-Nesse sentido, as intensidades das forças aplicadas são diretamente proporcionais às áreas dos êmbolos. Em contrapartida, não teríamos essa vantagem mecânica no sistema de freio através de uma simples alavanca, por exemplo. 
+In this sense, the intensities of the applied forces are directly proportional to the areas of the pistons. On the other hand, we would not have this mechanical advantage in the brake system through a simple lever, for example.
 
-Com isso em mente, quando você pressiona o pedal do freio, seu pé move uma alavanca que força um êmbolo pequeno em um cilindro longo cheio de fluido de freio. No qual multiplicará a força no êmbolo próximo ao disco de freio. Por outro lado, a variação de deslocamento no pedal do freio é maior em relação ao êmbolo da pinça de freio. Uma vez que ela é inversamente proporcional à área. Fazendo com que você tenha um deslocamento maior no pedal de freio.
+With that in mind, when you press the brake pedal, your foot moves a lever that forces a small plunger into a long cylinder filled with brake fluid. In which, it will multiply the force on the piston next to the brake disc. On the other hand, the variation of displacement in the brake pedal is greater in relation to the piston of the brake caliper. Since it is inversely proportional to the area. Causing you to have a greater displacement on the brake pedal.
 
-![Imagem mostrando sistema freio hidráulico"](/assets/img/posts/fusca-freio-a-disco/sistema-freio-hidraulico.gif)
+![Image showing hydraulic brake system"](/assets/img/posts/fusca-freio-a-disco/sistema-freio-hidraulico.gif)
 
-## Análise  do freio do Fusca
+## Beetle brake analysis
 
-A imagem abaixo mostra o quadro de peças de uma pinça de freio a disco. Note que existe uma borracha que permanece em contato direto com o êmbolo. Ela é o “coração” de funcionamento da pinça. Uma vez pressionado o pedal e, consequentemente, acionado o freio, ela tem o papel de puxar o êmbolo para sua posição inicial. Interessante observar que existe um anel de travamento do êmbolo (6). Ele impede que o êmbolo gire seu eixo e acabe reduzindo a vida útil da borracha.
+The image below shows the parts frame of a disc brake caliper. Note that there is a rubber that remains in direct contact with the plunger. It is the working “heart” of the tweezers. Once the pedal is pressed and, consequently, the brake is applied, it has the role of pulling the plunger to its initial position. It is interesting to note that there is a piston locking ring (6). It prevents the piston from rotating its axis and ends up reducing the life of the rubber.
 
-Vale lembrar que os primeiros fuscas possuem freios a tambor dianteiros. Deixarei uma animação que mostra em detalhes o seu funcionamento.
+Furthermore, it is worth remembering that the first Beetles have front drum brakes. I will leave an animation that shows in detail how it works.
 
-![Imagem mostrando freio dianteiro do Fusca"](/assets/img/posts/fusca-freio-a-disco/freio-dianteiro-fusca.jpg)
+![Image showing Beetle front brake"](/assets/img/posts/fusca-freio-a-disco/freio-dianteiro-fusca.jpg)
 
 
-## Reparo do freio na prática 
+## Practical brake repair
 
-O fluido de freio retém umidade e isso ocasiona a oxidação e degradação das peças internas de funcionamento do freio. Por isso a necessidade da troca anual do fluido de freio. A fim de prolongar a vida útil do freio. No meu caso não foi diferente, o fusca estava há dois anos sem realizar essa troca. E, infelizmente, não possuímos o hábito de utilizá-lo com frequência. Isso ocasionou o travamento dos êmbolos e, consequentemente, as rodas dianteiras ficaram travadas.
+Brake fluid retains moisture and this causes oxidation and degradation of the internal working parts of the brake. Hence, the need for annual brake fluid change. In order to prolong the life of the brake. In my case it was no different, the beetle had not made this change for two years. And unfortunately, we are not in the habit of using it often. This caused the pistons to lock and, consequently, the front wheels were locked.
 
-O par de pinça dianteiro é original, isto é, foram fabricados pela Ate. E já não existem mais reparos originais à venda. Precisei procurar bastante para encontrá-los. Os conjuntos atuais não possuem o anel (6) que impede a rotação do êmbolo.
+The front caliper pair is original, that is, they were manufactured by Ate. And there are no more original repairs for sale. It took a lot of searching to find them. Current assemblies do not have the ring (6) which prevents the piston from rotating.
 
-A troca do reparo é relativamente simples. A pior parte é a remoção dos dois êmbolos. Idealmente, tu podes utilizar um compressor de ar e forçar a saída deles. Porém, caso você não tenha, é possível utilizar o próprio fluido de freio. Coloque uma “trava” no lugar do disco de freio, para impedir a saída acidental de um dos êmbolos. Em paralelo, faça o acionamento do pedal do freio, gerando a movimentação deles. Uma vez removidos, o resto do serviço de troca dos reparos acaba sendo mais fácil. Após a troca dos reparos, faça a sangria completa do Fusca, começando pela roda mais distante do sistema central, que seria a roda traseira direita. Enfim, não farei o detalhamento completo do processo de reparo. Existem outros materiais disponíveis que já fazem muito bem o trabalho da elucidação desse serviço. Como, por exemplo, referência, o excelente trabalho do Marcelo Tonella, no qual detalhe com riqueza: https://www.youtube.com/watch?v=YClv2hF7hdM
+Changing the repair is relatively simple. The worst part is removing the two plungers. Ideally, you can use an air compressor and force them out. However, if you don't have it, you can use your own brake fluid. Put a “lock” in place of the brake disc, to prevent the accidental release of one of the pistons. In parallel, activate the brake pedal, generating their movement. Once removed, the rest of the repair service turns out to be easier. After changing the repairs, bleed the Beetle completely, starting with the wheel furthest from the central system, which would be the right rear wheel. Anyway, I won't go into the full detail of the repair process. There are other materials available that already do the job of elucidating this service very well. 
+
+

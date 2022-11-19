@@ -2,6 +2,7 @@ import styled, { css } from "styled-components";
 import transitions from "styles/transitions";
 
 import media from "styles/media";
+import prism from "styles/prism";
 
 export const PostWrapper = styled.div`
   ${({ theme }) => css`
@@ -55,10 +56,6 @@ export const PostTitle = styled.h1`
     font-weight: 700;
     padding: 0 ${theme.spacings.xsmall};
     margin-bottom: 2rem;
-
-    ${media.desktop`
-      margin-bottom: 1rem;
-    `};
   `}
 `;
 
@@ -67,7 +64,9 @@ export const PostDescription = styled.h2`
     color: ${theme.colors.white};
     font-size: 2rem;
     font-weight: 200;
+    line-height: ${theme.spacings.small};
     padding: 0 ${theme.spacings.xsmall};
+    border-left: solid ${theme.colors.secondary};
   `}
 `;
 
@@ -139,7 +138,8 @@ export const MainContent = styled.section`
     }
 
     p {
-      word-break: break-all;
+      hyphens: auto;
+      text-align: justify;
       margin: 0 auto ${theme.spacings.xsmall};
     }
 
@@ -164,27 +164,6 @@ export const MainContent = styled.section`
       & > ul {
         margin-bottom: 0;
       }
-    }
-
-    p,
-    li {
-      code {
-        word-wrap: break-word;
-      }
-    }
-
-    code {
-      background: #2d2d2d;
-      color: white;
-      padding: 0.1em;
-      border-radius: 0.3em;
-      white-space: normal;
-      overflow-wrap: break-word;
-      font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
-    }
-
-    pre > code {
-      white-space: pre;
     }
 
     img {
@@ -259,5 +238,7 @@ export const MainContent = styled.section`
         opacity: 0.8;
       }
     }
+
+    ${prism}
   `}
 `;
