@@ -62,9 +62,9 @@ function MyApp({ Component, pageProps }) {
           />
         </Head>
         <NextSeo
-          canonical="https://victormenezes.dev/"
+          canonical="https://victormenezes.fly.dev/"
           openGraph={{
-            url: "https://victormenezes.dev/",
+            url: "https://victormenezes.fly.dev/",
             site_name: "Victor Menezes",
             locale: "en_US",
             type: "website",

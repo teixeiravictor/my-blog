@@ -1,0 +1,481 @@
+
+    <rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+      <channel>
+        <title>Victor Menezes</title>
+        <link>https://victormenezes.dev</link>
+        <description>Um blog sobre ciência da computação e ciência. Feito por um entusiasta de matemática, física e programação.</description>
+        <language>en</language>
+        <lastBuildDate>Fri, 29 Jul 2022 00:00:00 GMT</lastBuildDate>
+        <atom:link href="https://victormenezes.dev" rel="self" type="application/rss+xml"/>
+        
+    <item>
+      <guid>https://victormenezes.dev/pt/articles/understanding-git-in-deep-way</guid>
+      <title>Afinal, como o Git funciona?</title>
+      <description>Vamos entender o que ocorre por detrás das cortinas quando geramos uma nova branch e comitamos nela, por exemplo.</description>
+      <link>https://victormenezes.dev/pt/articles/understanding-git-in-deep-way</link>
+      <pubDate>Fri, 29 Jul 2022 00:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h2 id="prefácio"><a href="#pref%C3%A1cio" class="anchor">Prefácio</a></h2>
+<p>O objetivo principal deste post é apresentar a ferramenta de
+versionamento Git. Ao longo deste documento, pretende-se abordar de forma direta todo o ecossistema Git. Entender que quando damos clone em um repositório, os arquivos visíveis no diretório principal apenas são um espelho do que está dentro de .git/objects. Saber que o Git é um banco de grafos (mais precisamente um <a href="https://git-scm.com/docs/gitglossary/pt_BR#gitglossary-aiddefDAGaDAG">grafo acíclico dirigido</a>). Sendo assim, compreendendo os mecanismos
+de funcionamento do Git tornará o seu uso mais fácil. E, é claro, lembre-se: um bom
+desenvolvedor sempre sabe por que está fazendo alguma coisa.</p>
+<h3 id="como-ler-este-post"><a href="#como-ler-este-post" class="anchor">Como ler este post</a></h3>
+<p>Existem várias maneiras de ler este documento.</p>
+<p>A primeira é ir direto aos capítulos de seu interesse e pular o restante. Todos
+os conceitos foram elaborados independentemente um dos outros. Não é necessário
+uma leitura linear.</p>
+<p>A segunda, que eu particularmente recomendo segui-la e exige um pouco mais
+de envolvimento; leia com atenção cada capítulo. Aplique os conceitos na prática. Pare
+e faça pequenos projetos em sua máquina. Enfim, absorva os conceitos. Garanto que
+esse será o melhor aprendizado.</p>
+<p>Além disso, ao final deste documento, você encontrará vários links de
+documentações, ferramentas e recomendações de livros para aprofundar seu
+conhecimento.</p>
+<h3 id="como-este-post-está-organizado"><a href="#como-este-post-est%C3%A1-organizado" class="anchor">Como este post está organizado</a></h3>
+<p>Cada capítulo pode ser lido de forma independente. O intuito é fornecer uma
+explicação simples e direta dos conceitos de Git. Sinta-se à vontade em lê-los do início
+ao fim. Tenha total liberdade caso queira ir direto aos capítulos que julga interessantes.
+Os capítulos estão agrupados em três partes. A primeira, realizamos uma
+verdadeira anatomia do Git (Entendendo o Git), explorando as suas principais partes e
+suas correlações. Juntamente a isso, faremos uma abordagem prática (Usando o Git) a
+partir dos principais comandos, desde os Plumbings, que podemos chamar da parte
+“baixo nível” do Git e a sua camada mais abstrata, que seriam os Porcelain atuando no
+“alto nível”. Veremos também como manter um repositório limpo (Boas Práticas). Por
+fim, você verá materiais de apoio (Referências), para caso tenha interesse em
+aprofundar-se no assunto.</p>
+<h2 id="entendendo-o-git"><a href="#entendendo-o-git" class="anchor">Entendendo o Git</a></h2>
+<h3 id="o-que-é-git"><a href="#o-que-%C3%A9-git" class="anchor">O que é Git?</a></h3>
+<p>Git é um sistema de gerenciamento de conteúdo. Segundo Linus Torvalds,
+criador do Git: “De muitas maneiras, você pode apenas ver o git como um sistema de
+arquivos - é endereçável por conteúdo e tem uma noção de controle de versão, mas eu
+realmente o projetei considerando o problema do ponto de vista do uso de sistema de
+arquivos e, na verdade, não tenho absolutamente nenhum interesse em criar um
+sistema de controle de versão tradicional.” ¹</p>
+<p>Quando a maioria dos sistemas de controle de versão aloca uma nova versão
+de um projeto, eles armazenam o diff (comparação de arquivos que gera as diferenças
+entre dois arquivos) do código. Quando o Git armazena uma nova versão de um projeto,
+ele armazena em uma nova árvore. Se você quiser um diff entre duas versões, o Git
+simplesmente olha para as duas árvores geradas e executa um novo diff sobre elas.
+Isso é o que basicamente permite que o sistema seja facilmente distribuído -
+ele não tem problemas para descobrir como aplicar uma série de comparações complexas, ele simplesmente transfere todos os diretórios e conteúdos que um
+usuário tem e outro não tem, mas está solicitando.</p>
+<p>¹ Original disponível em: http://marc.info/?l=linux-kernel&#x26;m=111314792424707</p>
+<h3 id="git-object-types"><a href="#git-object-types" class="anchor">Git Object Types</a></h3>
+<p>Os objetos Git são os dados reais do Git, a principal coisa que compõe o
+repositório. São os arquivos encontrados no diretório oculto .git. O diretório principal é
+um espelho desses arquivos.
+Existem quatro tipos de objetos principais no Git, sendo eles: “blob”, “tree”,
+“commit”, e "tag''.
+Todos esses tipos de objetos são armazenados no banco de dados de objetos
+Git, que é mantido no diretório oculto .git. Cada objeto é compactado e referenciado
+por um valor <a href="http://en.wikipedia.org/wiki/SHA1">SHA-1</a>. de seu conteúdo mais um
+pequeno cabeçalho, que seriam seus metadados. Um SHA cria um identificador de
+comprimento fixo (40 caracteres) que identifica exclusivamente uma parte específica
+do conteúdo.
+Sabe o id do commit que é exibido no histórico do projeto? Pois então, ele é
+uma forma abreviada da hash gerada. É com ele que conseguimos diferenciar os
+arquivos e rastreá-los.</p>
+<p>Faça um teste, abra um projeto, que esteja versionado, e execute o seguinte
+comando no seu terminal:</p>
+<pre><code class="language-bash">git show -s --format=%H
+</code></pre>
+<p>Depois compare o valor obtido com o id do seu último commit.</p>
+<h3 id="branching-e-merging"><a href="#branching-e-merging" class="anchor">Branching e Merging</a></h3>
+<p>Aqui chegamos a um dos pontos fortes do Git: branches e o merging delas.
+Este é um recurso que realmente o diferenciou na época de seu lançamento, uma vez
+que os sistemas de versionamento vigentes (Subversion e CVS) não entregavam.</p>
+<p>Branchs são nada mais do que uma ramificação do seu repositório. Sempre
+que você fizer alterações no seu repositório local, você enviará para uma branch.
+Inicialmente temos a master por padrão, que é a principal, como se fosse o tronco do
+projeto. É um conceito central, que permite diferentes workflows.
+Na verdade, no Git, o ato de criar um novo branch é simplesmente escrever um
+arquivo no diretório .git / refs / heads que contém o SHA-1 do último commit para
+aquele branch.</p>
+<p>Criar um branch nada mais é do que escrever 40 caracteres em um arquivo.
+Mudar para esse branch significa simplesmente fazer o Git fazer seu diretório
+de trabalho parecer a árvore para a qual o SHA-1 aponta e atualizar o arquivo HEAD para
+que cada commit daquele ponto em diante mova o ponteiro do branch para frente.</p>
+<p>Para visualizar melhor esse conceito, acesse a seguinte ferramenta: <a href="https://git-school.github.io/visualizing-git/">Visualing
+Git.</a></p>
+<p>Exemplo de nova branch:</p>
+<p><img src="/assets/img/posts/understanding-git-in-deep/branchs.png" alt="Imagem mostrando criação de branchs&#x22;"></p>
+<h2 id="usando-o-git"><a href="#usando-o-git" class="anchor">Usando o Git</a></h2>
+<h3 id="primeiros-passos"><a href="#primeiros-passos" class="anchor">Primeiros passos</a></h3>
+<p>Comece acessando o <a href="https://git-scm.com/downloads">site oficial</a> para baixar o instalador do git. Escolha o sistema operacional que você utiliza e baixe o instalador respectivo.
+Após isso, abra o terminal (caso esteja utilizando Windows, use o Guit Bash) e
+digite o seguinte comando:</p>
+<pre><code class="language-bash">git --version
+</code></pre>
+<p>Caso seja exibida a versão do Git, significa que sua instalação foi concluída com sucesso.</p>
+<h3 id="iniciando-um-repositório"><a href="#iniciando-um-reposit%C3%B3rio" class="anchor">Iniciando um repositório</a></h3>
+<p>Agora, criaremos nosso primeiro repositório Git. Abra o terminal e navegue até
+o diretório do seu projeto executando:</p>
+<pre><code class="language-bash">cd /caminho/do/diretorio
+</code></pre>
+<p>Com isso feito, você pode iniciar o repositório executando o seguinte comando:</p>
+<pre><code class="language-bash">git init
+</code></pre>
+<p>Isso inicializa o repositório ativando os recursos do Git. Note que agora existe
+um diretório .git na sua pasta git-repo, que armazena todos os dados de rastreamento
+de nosso repositório (pode ser necessário habilitar arquivos ocultos para visualizar
+esta pasta).</p>
+<p>Após isso, você precisa definir o seu nome e e-mail. Eles serão vinculados em
+cada alteração que você efetuar.</p>
+<p>Para definir um nome de usuário:</p>
+<pre><code class="language-bash">git config --global user.name "Seu nome"
+</code></pre>
+<p>Para definir um e-mail:</p>
+<pre><code class="language-bash">git config --global user.email "seu@email.com"
+</code></pre>
+<p>Para exibir suas configurações:</p>
+<pre><code class="language-bash">git config --list
+</code></pre>
+<p>Caso queira exibir uma configuração específica:</p>
+<pre><code class="language-bash">git config user.name
+git config user.email
+</code></pre>
+<p>Obs.: Caso queira utilizar uma outra identificação em um projeto específico,
+utilize o mesmo comando para definir e-mail e nome, mas sem a opção global
+sinalizada.</p>
+<h3 id="fluxo-de-trabalho"><a href="#fluxo-de-trabalho" class="anchor">Fluxo de trabalho</a></h3>
+<p>O fluxo de trabalho básico do Git define-se em três “etapas":</p>
+<ul>
+<li>Working Directory: Modifica arquivos no seu diretório de trabalho;</li>
+<li>Staging Area: Executa uma série de ações a serem “comitadas”. Porém, o que
+está na etapa anterior (working directory) não será enviado ao repositório.
+Apenas o que foi informado e confirmado pelo comando <strong>git add</strong>. Assim, uma
+vez os arquivos modificados estando nesta etapa, serão enviados através de
+uma “snapshot” do seu código para área de preparação (staging area); e</li>
+<li>Repository: Execução de um commit, que leva os arquivos como eles estão na
+sua área de preparação e os armazena no seu diretório Git.</li>
+</ul>
+<p><img src="/assets/img/posts/understanding-git-in-deep/workflow.jpeg" alt="Imagem mostrando fluxo de trabalho&#x22;"></p>
+<p>Além disso, cada arquivo tem possíveis três “estados":</p>
+<ul>
+<li>Committed: Alterações não modificadas do último snapshot;</li>
+<li>Modified: Alterações feitas nos arquivos desde o último snapshot comitado; e</li>
+<li>Staged: Mudanças marcadas para serem adicionadas ao próximo snapshot via
+commit.</li>
+</ul>
+<p><img src="/assets/img/posts/understanding-git-in-deep/stages.jpeg" alt="Imagem mostrando estados trabalho&#x22;"></p>
+<h3 id="seu-maior-amigo-git-log"><a href="#seu-maior-amigo-git-log" class="anchor">Seu maior amigo: git log</a></h3>
+<p>Sempre quando você quiser visualizar a linha do tempo, quem fez cada commit
+e coisas do tipo, utilize o comando:</p>
+<pre><code class="language-bash">git log
+</code></pre>
+<p>Você conseguirá ver todo o histórico do projeto através dele.</p>
+<p>Ele exibirá o hash do commit, autor com nome e e-mail, mensagem e a hora do
+commit.</p>
+<p>Caso queira visualizar apenas as iniciais do commit (hash e a mensagem) utilize
+o seguinte comando:</p>
+<pre><code class="language-bash">git log --oneline
+</code></pre>
+<p>Além disso, podemos exibir todos os commits efetuados nas branchs do
+projeto, usando:</p>
+<pre><code class="language-bash">git log --oneline --all --graph 
+</code></pre>
+<p>Mas caso queira identificar as branchs, utilize este comando:</p>
+<pre><code class="language-bash">git log --oneline --all --decorate --graph 
+</code></pre>
+<h3 id="comandos-porcelain-e-plumbing"><a href="#comandos-porcelain-e-plumbing" class="anchor">Comandos Porcelain e Plumbing</a></h3>
+<p>Porcelain e Plumbing são analogias utilizadas para separar comandos de "alto
+nível” e “baixo nível”, respectivamente. Inicialmente, o Git utilizava comandos Plumbing,
+sendo os primeiros comandos a serem criados pelo Linus Torvalds. Eles geralmente
+são utilizados em ferramentas e scripts.</p>
+<p>Posteriormente, foram inseridos comandos amigáveis por outros
+mantenedores do Git, como, por exemplo, Junio Hamano. Para aprofundamento,
+recomendo que leia a seguinte thread no StackOverflow: <a href="https://stackoverflow.com/questions/6976473/what-does-the-term-porcelain-mean-in-git?noredirect=1&#x26;lq=1">Porcelain and Plumbing</a>. É interessante conhecer esses comandos para familiarizar-se com a evolução deles.</p>
+<p>Além disso, através do comando <strong>man git</strong>, você terá acesso a todos os
+comandos. Os comandos mais utilizados estão na seção “High-Level Commands
+(Porcelain)”. Para comandos internos do git, temos a seção “Low-Level Commands
+(Plumbing)”.</p>
+<p>Sempre que precisar sanar uma dúvida, ou o que determinado comando
+realiza, utilize esses guias como consulta rápida.</p>
+<h2 id="boas-práticas"><a href="#boas-pr%C3%A1ticas" class="anchor">Boas práticas</a></h2>
+<h3 id="uma-pequena-funcionalidade-para-cada-commit"><a href="#uma-pequena-funcionalidade-para-cada-commit" class="anchor">Uma pequena funcionalidade para cada commit</a></h3>
+<p>São conhecidos como "commits atômicos". Não escreva qualquer coisa, por exemplo, hot fix ou adjusted. É preciso que a sua mensagem seja a mais descritiva possível. Lembre-se que a principal função do git é gravar um registro preciso da história do projeto. Voltar no tempo a qualquer momento e analisar como o código estava.</p>
+<p>Separe os arquivos específicos do ajuste, não suba todos os arquivos que você
+alterou na semana. Por favor, não faça isso! Além de poluir o repositório, dificulta a
+visualização do histórico.</p>
+<h3 id="errei-a-mensagem-no-commit-como-eu-corrijo"><a href="#errei-a-mensagem-no-commit-como-eu-corrijo" class="anchor">Errei a mensagem no commit. Como eu corrijo?</a></h3>
+<p>Às vezes, por decorrência da urgência, ou por descuido, acabamos
+commitando com uma mensagem errada. Para ajustar isso é bem simples, veja:</p>
+<pre><code class="language-bash">git commit -m "Mensagem Errada"
+git commit -m "Mensagem Correta" --amend
+</code></pre>
+<p>Caso esqueça de alterar ou colocar algo a mais no arquivo, você poderá ajustar
+de forma bem simples támbém, veja:</p>
+<pre><code class="language-bash">touch file-test3.txt
+git add .
+git commit -m "Mensagem Commit"
+touch file-test4.txt
+git add .
+git commit -m "Mensagem Commit"
+git log
+git reset --soft HEAD~3
+</code></pre>
+<h3 id="conventional-commits"><a href="#conventional-commits" class="anchor">Conventional Commits</a></h3>
+<p>O <a href="https://www.conventionalcommits.org/pt-br/v1.0.0/">Conventional Commits</a> é um padrão para mensagens de commit. Ele fornece
+um conjunto de regras para criar mensagens de commit que são fáceis de serem lidas por humanos.</p>
+<p>Usualmente ela segue o seguinte formato:</p>
+<pre><code class="language-bash">&#x3C;tipo>(escopo?): &#x3C;descrição>
+</code></pre>
+<p>Cada tipo é um elemento estrutural, que visa comunicar uma determinada intenção no commit.</p>
+<p>Existem tipos baseados na <a href="https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional#type-enum">convenção Angular</a>, que são:</p>
+<blockquote>
+<p>build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test</p>
+</blockquote>
+<p>Claro, nada impede que você crie seus próprios tipos, mas é importante que
+seja algo que faça sentido para o seu projeto.</p>
+<h2 id="referências"><a href="#refer%C3%AAncias" class="anchor">Referências</a></h2>
+<p>Deixarei indicações de materiais para aprofundamento. Está separado em
+documentações e cursos, que são guias, livros e boas práticas de Git.</p>
+<h3 id="documentações-e-guias"><a href="#documenta%C3%A7%C3%B5es-e-guias" class="anchor">Documentações e Guias</a></h3>
+<ul>
+<li><a href="https://git-scm.com/doc">Git - Documentação Oficial</a>;</li>
+<li><a href="https://git-scm.com/book/en/v2">Git Book.</a> É a bíblia do Git, tudo que você precisa saber está aqui;</li>
+<li><a href="https://www.atlassian.com/git/tutorials">Atlassian Bitbucket Tutorial.</a> Compilado de vários tutorias do Git;</li>
+<li><a href="https://github.com/k88hudson/git-flight-rules">Flight rules for Git.</a> O nome já diz tudo. Basicamente um FAQ sobre Git;</li>
+<li><a href="https://learngitbranching.js.org/?locale=pt_BR">Learn Git Branch.</a> Ferramenta visual para aprendizado do conceito de branch;</li>
+<li><a href="https://github.com/arslanbilal/git-cheat-sheet">Git Cheat Sheet.</a> Compilado dos comandos do Git;</li>
+<li><a href="https://github.com/git-tips/tips">Git Tips.</a> Dicas úteis para o dia a dia;</li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-git-integration-in-visual-studio-code-pt">Git on VS Code.</a> Como vincular o Git no VS Code;</li>
+<li><a href="https://www.youtube.com/c/DanGitschoolDude">Git School Dude.</a> Canal do YouTube com vários vídeos de Git excelentes. Ele cobre tudo, desde o básico até tópicos avançados; e</li>
+<li><a href="https://www.youtube.com/watch?v=6Czd1Yetaac">Entendendo o Git.</a> Vídeo do Fabio Akita explicando o detalhadamente o uso do Git.</li>
+</ul>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://victormenezes.dev/pt/articles/vw-bettle</guid>
+      <title>Freio a Disco - Fusca</title>
+      <description>Afinal, como funciona um freio a disco? Precisei reparar o freio dianteiro do fusca e resolvi documentar o processo e explicar como funciona um freio a disco.</description>
+      <link>https://victormenezes.dev/pt/articles/vw-bettle</link>
+      <pubDate>Fri, 29 Jul 2022 00:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h1 id="como-funcionam-os-freios-a-disco"><a href="#como-funcionam-os-freios-a-disco" class="anchor">Como funcionam os freios a disco</a></h1>
+<h2 id="um-pouco-de-história"><a href="#um-pouco-de-hist%C3%B3ria" class="anchor">Um pouco de história</a></h2>
+<p>Ao longo dos anos, diferentes tipos de freios foram usados ​​em muitos tipos diferentes de veículos. Desde a invenção da roda (originalmente, roda de disco abaulado), o sistema de frenagem desempenha papel crucial em desacelerar ou parar veículos em movimento, sejam eles elétricos, automotores, de tração animal, ou reboque, por exemplo. Em resumo, o princípio de funcionamento dos freios baseia-se no ato de fricção, isto é, conversão de energia cinética em energia térmica pela aplicação de atrito às partes móveis de um sistema. Em decorrência disso, existem diferentes variações de sistemas de freios. No início do século XX, quando os carros tornaram-se amplamente disponíveis, surgiram os primeiros modelos de sistema de freio baseados em ficção, entre eles, temos o registro histórico de patente por John Stawartz (https://patents.google.com/patent/US96042) em 1910.</p>
+<p><img src="/assets/img/posts/fusca-freio-a-disco/primeiro-modelo.png" alt="Imagem mostrando primeiro modelo de freio baseado em ficção&#x22;"></p>
+<p>Porém, imagine esse sistema de freio por alavanca em um carro a 80km/h. Simplesmente seria impossível, ou totalmente insano, realizar uma força suficiente para reduzir a velocidade e parar rapidamente em uma situação de emergência. Em decorrência disso, em 1924 temos o desenvolvimento do freio hidráulico pelo engenheiro escocês Malcolm Loughead (mais tarde os direitos de patente foram vendidos para outras empresas, uma das quais Alfred Teves Brake Systems, atual Ate).</p>
+<h2 id="princípio-de-funcionamento"><a href="#princ%C3%ADpio-de-funcionamento" class="anchor">Princípio de funcionamento</a></h2>
+<p>E a principal vantagem está no uso do Princípio de Pascal, no qual a pressão (P) aplicada sobre um ponto transmite para todos os outros pontos do fluido. E temos que a pressão (P) é definida pela razão entre a força (F) aplicada e sua área de contato (A). Logo, utilizando uma prensa hidráulica, temos que a A1 e A2 possuem pressões P1 e P2, respectivamente, iguais. Temos, então: P1=F1/A1 e P2=F2/A2. E pelo princípio de pascal P2=P1.</p>
+<p>Então:</p>
+<p>F2/A2=F1/A1</p>
+<p>F2/F1= A2/A1</p>
+<p>Se A2 = 4A1</p>
+<p>F2 = 4F1</p>
+<p>Nesse sentido, as intensidades das forças aplicadas são diretamente proporcionais às áreas dos êmbolos. Em contrapartida, não teríamos essa vantagem mecânica no sistema de freio através de uma simples alavanca, por exemplo.</p>
+<p>Com isso em mente, quando você pressiona o pedal do freio, seu pé move uma alavanca que força um êmbolo pequeno em um cilindro longo cheio de fluido de freio. No qual multiplicará a força no êmbolo próximo ao disco de freio. Por outro lado, a variação de deslocamento no pedal do freio é maior em relação ao êmbolo da pinça de freio. Uma vez que ela é inversamente proporcional à área. Fazendo com que você tenha um deslocamento maior no pedal de freio.</p>
+<p><img src="/assets/img/posts/fusca-freio-a-disco/sistema-freio-hidraulico.gif" alt="Imagem mostrando sistema freio hidráulico&#x22;"></p>
+<h2 id="análise--do-freio-do-fusca"><a href="#an%C3%A1lise--do-freio-do-fusca" class="anchor">Análise  do freio do Fusca</a></h2>
+<p>A imagem abaixo mostra o quadro de peças de uma pinça de freio a disco. Note que existe uma borracha que permanece em contato direto com o êmbolo. Ela é o “coração” de funcionamento da pinça. Uma vez pressionado o pedal e, consequentemente, acionado o freio, ela tem o papel de puxar o êmbolo para sua posição inicial. Interessante observar que existe um anel de travamento do êmbolo (6). Ele impede que o êmbolo gire seu eixo e acabe reduzindo a vida útil da borracha.</p>
+<p>Vale lembrar que os primeiros fuscas possuem freios a tambor dianteiros. Deixarei uma animação que mostra em detalhes o seu funcionamento.</p>
+<p><img src="/assets/img/posts/fusca-freio-a-disco/freio-dianteiro-fusca.jpg" alt="Imagem mostrando freio dianteiro do Fusca&#x22;"></p>
+<h2 id="reparo-do-freio-na-prática"><a href="#reparo-do-freio-na-pr%C3%A1tica" class="anchor">Reparo do freio na prática</a></h2>
+<p>O fluido de freio retém umidade e isso ocasiona a oxidação e degradação das peças internas de funcionamento do freio. Por isso a necessidade da troca anual do fluido de freio. A fim de prolongar a vida útil do freio. No meu caso não foi diferente, o fusca estava há dois anos sem realizar essa troca. E, infelizmente, não possuímos o hábito de utilizá-lo com frequência. Isso ocasionou o travamento dos êmbolos e, consequentemente, as rodas dianteiras ficaram travadas.</p>
+<p>O par de pinça dianteiro é original, isto é, foram fabricados pela Ate. E já não existem mais reparos originais à venda. Precisei procurar bastante para encontrá-los. Os conjuntos atuais não possuem o anel (6) que impede a rotação do êmbolo.</p>
+<p>A troca do reparo é relativamente simples. A pior parte é a remoção dos dois êmbolos. Idealmente, tu podes utilizar um compressor de ar e forçar a saída deles. Porém, caso você não tenha, é possível utilizar o próprio fluido de freio. Coloque uma “trava” no lugar do disco de freio, para impedir a saída acidental de um dos êmbolos. Em paralelo, faça o acionamento do pedal do freio, gerando a movimentação deles. Uma vez removidos, o resto do serviço de troca dos reparos acaba sendo mais fácil. Após a troca dos reparos, faça a sangria completa do Fusca, começando pela roda mais distante do sistema central, que seria a roda traseira direita. Enfim, não farei o detalhamento completo do processo de reparo. Existem outros materiais disponíveis que já fazem muito bem o trabalho da elucidação desse serviço. Como, por exemplo, referência, o excelente trabalho do Marcelo Tonella, no qual detalhe com riqueza: https://www.youtube.com/watch?v=YClv2hF7hdM</p>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://victormenezes.dev/en/articles/understanding-git-in-deep-way</guid>
+      <title>After all, how Git works?</title>
+      <description>Let's understand what happens behind the scenes when we create a new branch and commit to it, for example.</description>
+      <link>https://victormenezes.dev/en/articles/understanding-git-in-deep-way</link>
+      <pubDate>Fri, 29 Jul 2022 00:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h2 id="preface"><a href="#preface" class="anchor">Preface</a></h2>
+<p>The main goal of this post is to introduce the Git version control system. Throughout this document, we aim to provide a straightforward overview of the entire Git ecosystem. Understanding that when we clone a repository, the visible files in the main directory are merely a mirror of what is inside <code>.git/objects</code>. Knowing that Git is a graph database (more precisely, a <a href="https://git-scm.com/docs/gitglossary#gitglossary-aiddefDAGaDAG">directed acyclic graph</a>). Therefore, understanding Git's inner workings will make its usage easier. And, of course, remember: a good developer always knows why they are doing something.</p>
+<h3 id="how-to-read-this-post"><a href="#how-to-read-this-post" class="anchor">How to Read This Post</a></h3>
+<p>There are several ways to read this document.</p>
+<p>The first is to go directly to the chapters that interest you and skip the rest. All concepts were developed independently of each other, so a linear reading is not necessary.</p>
+<p>The second, which I personally recommend and requires a bit more involvement, is to carefully read each chapter. Apply the concepts in practice. Pause and create small projects on your machine. In short, absorb the concepts. I guarantee this will be the best way to learn.</p>
+<p>Additionally, at the end of this document, you will find several links to documentation, tools, and book recommendations to deepen your knowledge.</p>
+<h3 id="how-this-post-is-organized"><a href="#how-this-post-is-organized" class="anchor">How This Post is Organized</a></h3>
+<p>Each chapter can be read independently. The goal is to provide a simple and direct explanation of Git concepts. Feel free to read them from beginning to end or skip directly to the chapters you find most interesting.</p>
+<p>The chapters are grouped into three sections. In the first, we take a deep dive into Git’s structure (<strong>Understanding Git</strong>), exploring its main components and their correlations. Alongside this, we will take a practical approach (<strong>Using Git</strong>) by covering the main commands, from the <strong>Plumbing</strong> commands, which we can consider the "low-level" part of Git, to its more abstract layer, the <strong>Porcelain</strong>, which operates at a "high level."</p>
+<p>We will also look at how to keep a repository clean (<strong>Best Practices</strong>). Finally, you will find supporting materials (<strong>References</strong>) in case you want to further deepen your knowledge on the subject.</p>
+<h2 id="understanding-git"><a href="#understanding-git" class="anchor">Understanding Git</a></h2>
+<h3 id="what-is-git"><a href="#what-is-git" class="anchor">What is Git?</a></h3>
+<p>Git is a content management system. According to Linus Torvalds, the creator of Git:<br>
+*"In many ways, you can just see Git as a filesystem—it is content-addressable and has some notion of version control, but I actually designed it with the problem of filesystem usage in mind, and I really have absolutely no interest in creating a traditional version control system."*¹</p>
+<p>While most version control systems store a new version of a project by saving the <strong>diff</strong> (a comparison of files that generates the differences between two versions), Git takes a different approach. When Git stores a new version of a project, it saves it as a new tree. If you need a <strong>diff</strong> between two versions, Git simply compares the two trees and generates a new diff between them.</p>
+<p>This fundamental difference makes Git easily distributable—it does not struggle with complex comparisons; instead, it simply transfers all the directories and contents that one user has and another is requesting.</p>
+<p>¹ Original available at: <a href="http://marc.info/?l=linux-kernel&#x26;m=111314792424707">http://marc.info/?l=linux-kernel&#x26;m=111314792424707</a></p>
+<h3 id="git-object-types"><a href="#git-object-types" class="anchor">Git Object Types</a></h3>
+<p>Git objects are the actual data in Git—the core elements that make up the repository. These are the files found in the hidden <code>.git</code> directory. The main directory is simply a mirror of these files.</p>
+<p>There are four main types of objects in Git: <strong>blob</strong>, <strong>tree</strong>, <strong>commit</strong>, and <strong>tag</strong>.<br>
+All these object types are stored in the Git object database, which is maintained in the hidden <code>.git</code> directory. Each object is compressed and referenced by a <a href="http://en.wikipedia.org/wiki/SHA1">SHA-1</a> value, which consists of its content plus a small header containing metadata.</p>
+<p>A SHA-1 hash creates a fixed-length (40-character) identifier that uniquely represents a specific piece of content.<br>
+Have you seen the commit ID displayed in the project history? That is simply a shortened version of the generated hash. It is what allows us to differentiate and track files.</p>
+<p>Try this: open a versioned project and run the following command in your terminal:</p>
+<pre><code class="language-bash">git show -s --format=%H
+</code></pre>
+<p>Then, compare the obtained value with the ID of your latest commit.</p>
+<h3 id="branching-and-merging"><a href="#branching-and-merging" class="anchor">Branching and Merging</a></h3>
+<p>Here we arrive at one of Git’s strongest features: <strong>branches and merging</strong>.<br>
+This is a feature that truly set Git apart when it was first released, as the existing version control systems at the time (Subversion and CVS) did not offer this capability.</p>
+<p>Branches are simply a way to create a separate line of development within your repository. Every time you make changes in your local repository, you will be working on a branch.<br>
+By default, we start with the <strong>master</strong> branch, which serves as the main branch—like the trunk of a tree. This is a fundamental concept that allows for different workflows.</p>
+<p>In Git, creating a new branch is simply a matter of writing a file inside <code>.git/refs/heads</code>, which contains the SHA-1 of the latest commit for that branch.</p>
+<p>Creating a branch is nothing more than writing <strong>40 characters</strong> into a file.<br>
+Switching to that branch means Git updates your working directory to reflect the tree pointed to by the SHA-1 and updates the <code>HEAD</code> file so that every commit from that point forward moves the branch pointer ahead.</p>
+<p>To better visualize this concept, check out the following tool:<br>
+<a href="https://git-school.github.io/visualizing-git/">Visualizing Git</a>.</p>
+<p>Example of creating a new branch:</p>
+<p><img src="/assets/img/posts/understanding-git-in-deep/branchs.png" alt="Branch creation example"></p>
+<h2 id="using-git"><a href="#using-git" class="anchor">Using Git</a></h2>
+<h3 id="getting-started"><a href="#getting-started" class="anchor">Getting Started</a></h3>
+<p>Start by visiting the <a href="https://git-scm.com/downloads">official website</a> to download the Git installer. Choose the appropriate version for your operating system and proceed with the installation.</p>
+<p>After that, open the terminal (if you are using Windows, use <strong>Git Bash</strong>) and enter the following command:</p>
+<pre><code class="language-bash">git --version
+</code></pre>
+<p>If the Git version is displayed, it means your installation was successful.</p>
+<h3 id="initializing-a-repository"><a href="#initializing-a-repository" class="anchor">Initializing a Repository</a></h3>
+<p>Now, let's create our first Git repository. Open the terminal and navigate to your project directory by running:</p>
+<pre><code class="language-bash">cd /path/to/directory
+</code></pre>
+<p>With this done, you can initialize the repository by running the following command:</p>
+<pre><code class="language-bash">git init
+</code></pre>
+<p>This initializes the repository, enabling Git's features. Note that a <code>.git</code> directory now exists inside your project folder, storing all the tracking data for your repository (you may need to enable hidden files to see this folder).</p>
+<p>After that, you need to set your name and email. These will be linked to every change you make.</p>
+<p>To set a username:</p>
+<pre><code class="language-bash">git config --global user.name "My Name"
+</code></pre>
+<p>Para definir um e-mail:</p>
+<pre><code class="language-bash">git config --global user.email "my@email.com"
+</code></pre>
+<p>To display your configurations:</p>
+<pre><code class="language-bash">git config --list
+</code></pre>
+<p>If you want to display a specific configuration:</p>
+<pre><code class="language-bash">git config user.name
+git config user.email
+</code></pre>
+<p><strong>Note:</strong> If you want to use a different identity for a specific project, use the same command to set your email and name, but without the <code>--global</code> option.</p>
+<h3 id="workflow"><a href="#workflow" class="anchor">Workflow</a></h3>
+<p>The basic Git workflow is defined in three "stages":</p>
+<ul>
+<li><strong>Working Directory:</strong> Modify files in your working directory.</li>
+<li><strong>Staging Area:</strong> Perform a series of actions to be "committed." However, changes in the previous stage (working directory) will not be sent to the repository. Only the files that have been added and confirmed using the <code>git add</code> command will be staged. Once modified files reach this stage, they are prepared as a "snapshot" of your code in the staging area.</li>
+<li><strong>Repository:</strong> A commit is executed, taking the files as they are in the staging area and storing them in your Git directory.</li>
+</ul>
+<p><img src="/assets/img/posts/understanding-git-in-deep/workflow.jpeg" alt="Image showing workflow&#x22;"></p>
+<p>Additionally, each file can be in one of three possible "states":</p>
+<ul>
+<li><strong>Committed:</strong> Changes that have not been modified since the last snapshot.</li>
+<li><strong>Modified:</strong> Changes made to the files since the last committed snapshot.</li>
+<li><strong>Staged:</strong> Changes that are marked to be added to the next snapshot via commit.</li>
+</ul>
+<p><img src="/assets/img/posts/understanding-git-in-deep/stages.jpeg" alt="Image showing file states&#x22;"></p>
+<h3 id="your-best-friend-git-log"><a href="#your-best-friend-git-log" class="anchor">Your Best Friend: git log</a></h3>
+<p>Whenever you want to view the timeline, see who made each commit, and other details, use the command:</p>
+<pre><code class="language-bash">git log
+</code></pre>
+<p>You will be able to see the entire project history using this command.</p>
+<p>It will display the commit hash, author (with name and email), commit message, and timestamp.</p>
+<p>If you want to view only the commit initials (hash and message), use the following command:</p>
+<pre><code class="language-bash">git log --oneline
+</code></pre>
+<p>Additionally, we can display all commits made across the project's branches by using:</p>
+<pre><code class="language-bash">git log --oneline --all --graph 
+</code></pre>
+<p>But if you want to identify the branches, use this command:</p>
+<pre><code class="language-bash">git log --oneline --all --decorate --graph 
+</code></pre>
+<h3 id="porcelain-and-plumbing-commands"><a href="#porcelain-and-plumbing-commands" class="anchor">Porcelain and Plumbing Commands</a></h3>
+<p><strong>Porcelain</strong> and <strong>Plumbing</strong> are analogies used to differentiate <strong>high-level</strong> and <strong>low-level</strong> Git commands, respectively.<br>
+Initially, Git used <strong>Plumbing</strong> commands, which were the first ones created by Linus Torvalds. These are typically used in tools and scripts.</p>
+<p>Later, more user-friendly <strong>Porcelain</strong> commands were introduced by other Git maintainers, such as Junio Hamano.<br>
+For further reading, I recommend checking out this StackOverflow thread: <a href="https://stackoverflow.com/questions/6976473/what-does-the-term-porcelain-mean-in-git?noredirect=1&#x26;lq=1">Porcelain and Plumbing</a>. Understanding these commands will help you become more familiar with their evolution.</p>
+<p>Additionally, by running the command:<strong>man git</strong>, you can access all available commands.
+The most commonly used commands can be found in the <strong>"High-Level Commands (Porcelain)"</strong> section.<br>
+For Git's internal commands, refer to the <strong>"Low-Level Commands (Plumbing)"</strong> section.</p>
+<p>Whenever you need to clarify a doubt or understand what a specific command does, use these guides as a quick reference.</p>
+<h2 id="best-practices"><a href="#best-practices" class="anchor">Best Practices</a></h2>
+<h3 id="one-small-feature-per-commit"><a href="#one-small-feature-per-commit" class="anchor">One Small Feature per Commit</a></h3>
+<p>These are known as <strong>"atomic commits."</strong><br>
+Do not write vague commit messages like <em>hot fix</em> or <em>adjusted</em>. Your commit message should be as descriptive as possible.<br>
+Remember, Git's primary function is to maintain an accurate record of the project's history, allowing you to go back in time and analyze how the code was at any given moment.</p>
+<p><strong>Commit only specific files related to your changes</strong>—do not commit all the files you modified throughout the week. Please, <strong>do not do this!</strong> Committing unrelated files clutters the repository and makes it harder to review the project history.</p>
+<h3 id="i-made-a-mistake-in-the-commit-message-how-do-i-fix-it"><a href="#i-made-a-mistake-in-the-commit-message-how-do-i-fix-it" class="anchor">I Made a Mistake in the Commit Message. How Do I Fix It?</a></h3>
+<p>Sometimes, due to urgency or carelessness, we end up committing with an incorrect message. Fixing this is quite simple, see below:</p>
+<pre><code class="language-bash">git commit -m "Wrong Message"
+git commit -m "Right Message" --amend
+</code></pre>
+<p>If you forget to modify or add something to the file, you can easily fix it as well. See below:</p>
+<pre><code class="language-bash">touch file-test3.txt
+git add .
+git commit -m "Message Commit"
+touch file-test4.txt
+git add .
+git commit -m "Message Commit"
+git log
+git reset --soft HEAD~3
+</code></pre>
+<h3 id="conventional-commits"><a href="#conventional-commits" class="anchor">Conventional Commits</a></h3>
+<p><a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a> is a standard for commit messages.<br>
+It provides a set of rules for writing commit messages that are easy to read and understand.</p>
+<p>Typically, it follows this format:</p>
+<pre><code class="language-bash">&#x3C;type>(scope?): &#x3C;description>
+</code></pre>
+<p>Each type is a structural element designed to communicate a specific intent in the commit.</p>
+<p>There are types based on the <a href="https://github.com/conventional-changelog/commitlint/tree/master/@commitlint/config-conventional#type-enum">Angular convention</a>, which include:</p>
+<blockquote>
+<p>build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+Of course, nothing prevents you from creating your own types, but it's important that they make sense for your project.</p>
+</blockquote>
+<h2 id="references"><a href="#references" class="anchor">References</a></h2>
+<p>Here are some recommended materials for further learning. They are categorized into documentation and courses, including guides, books, and</p>
+<h3 id="documentation-and-guides"><a href="#documentation-and-guides" class="anchor">Documentation and Guides</a></h3>
+<ul>
+<li><a href="https://git-scm.com/doc">Git - Official Documentation</a>;</li>
+<li><a href="https://git-scm.com/book/en/v2">Git Book</a> – The Git Bible, everything you need to know is here;</li>
+<li><a href="https://www.atlassian.com/git/tutorials">Atlassian Bitbucket Tutorial</a> – A compilation of various Git tutorials;</li>
+<li><a href="https://github.com/k88hudson/git-flight-rules">Flight Rules for Git</a> – The name says it all: basically a Git FAQ;</li>
+<li><a href="https://learngitbranching.js.org/?locale=en_US">Learn Git Branching</a> – A visual tool to help understand branching concepts;</li>
+<li><a href="https://github.com/arslanbilal/git-cheat-sheet">Git Cheat Sheet</a> – A compilation of Git commands;</li>
+<li><a href="https://github.com/git-tips/tips">Git Tips</a> – Useful tips for everyday use;</li>
+<li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-git-integration-in-visual-studio-code">Git on VS Code</a> – How to integrate Git with VS Code;</li>
+<li><a href="https://www.youtube.com/c/DanGitschoolDude">Git School Dude</a> – A YouTube channel with excellent Git tutorials, covering everything from basics to advanced topics; and</li>
+<li><a href="https://www.youtube.com/watch?v=6Czd1Yetaac">Understanding Git</a> – A detailed video by Fabio Akita explaining Git usage in depth.</li>
+</ul>
+]]></content:encoded>
+    </item>
+  
+    <item>
+      <guid>https://victormenezes.dev/en/articles/vw-bettle</guid>
+      <title>Brake System - VW Bettle</title>
+      <description>How does a disc brake work? I needed to fix the early break of my VW Beetle and document how to work a disc brake.</description>
+      <link>https://victormenezes.dev/en/articles/vw-bettle</link>
+      <pubDate>Fri, 29 Jul 2022 00:00:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h1 id="how-disc-brakes-work"><a href="#how-disc-brakes-work" class="anchor">How disc brakes work</a></h1>
+<h2 id="a-little-of-history"><a href="#a-little-of-history" class="anchor">A little of history</a></h2>
+<p>Over the years, different types of brakes have been used on many different types of vehicles. Since the invention of the wheel (originally, a domed disc wheel), the braking system has played a crucial role in slowing down or stopping moving vehicles, whether electric, self-propelled, animal-drawn, or trailer, for example. In summary, the working principle of brakes is based on the act of friction, that is, the conversion of kinetic energy into thermal energy by applying friction to the moving parts of a system. As a result, there are different variations of brake systems. At the beginning of the 20th century, when cars became widely available, the first fictional brake system models appeared, among them, we have the historical patent registration by John Stawartz (https://patents.google.com/ patent/US96042) in 1910.</p>
+<p><img src="/assets/img/posts/fusca-freio-a-disco/primeiro-modelo.png" alt="Image showing first fiction-based brake model&#x22;"></p>
+<p>But imagine this lever brake system on a car traveling at 50 mph. It would simply be impossible, or downright insane, to apply enough force to slow down and stop quickly in an emergency situation. As a result, in 1924 we have the development of the hydraulic brake by the Scottish engineer Malcolm Loughead (later the patent rights were sold to other companies, one of which was Alfred Teves Brake Systems, now Ate).</p>
+<h2 id="working-principle"><a href="#working-principle" class="anchor">Working principle</a></h2>
+<p>And the main advantage is in the use of Pascal's Principle, in which the pressure (P) applied on a point transmits to all other points of the fluid. And we have that the pressure (P) is defined by the ratio between the applied force (F) and its contact area (A). Therefore, using a hydraulic press, we have that A1 and A2 have equal pressures P1 and P2, respectively. We then have: P1=F1/A1 and P2=F2/A2. And by the pascal principle, P2=P1.</p>
+<p>So:</p>
+<p>F2/A2=F1/A1</p>
+<p>F2/F1= A2/A1</p>
+<p>If A2 = 4A1</p>
+<p>F2 = 4F1</p>
+<p>In this sense, the intensities of the applied forces are directly proportional to the areas of the pistons. On the other hand, we would not have this mechanical advantage in the brake system through a simple lever, for example.</p>
+<p>With that in mind, when you press the brake pedal, your foot moves a lever that forces a small plunger into a long cylinder filled with brake fluid. In which, it will multiply the force on the piston next to the brake disc. On the other hand, the variation of displacement in the brake pedal is greater in relation to the piston of the brake caliper. Since it is inversely proportional to the area. Causing you to have a greater displacement on the brake pedal.</p>
+<p><img src="/assets/img/posts/fusca-freio-a-disco/sistema-freio-hidraulico.gif" alt="Image showing hydraulic brake system&#x22;"></p>
+<h2 id="beetle-brake-analysis"><a href="#beetle-brake-analysis" class="anchor">Beetle brake analysis</a></h2>
+<p>The image below shows the parts frame of a disc brake caliper. Note that there is a rubber that remains in direct contact with the plunger. It is the working “heart” of the tweezers. Once the pedal is pressed and, consequently, the brake is applied, it has the role of pulling the plunger to its initial position. It is interesting to note that there is a piston locking ring (6). It prevents the piston from rotating its axis and ends up reducing the life of the rubber.</p>
+<p>Furthermore, it is worth remembering that the first Beetles have front drum brakes. I will leave an animation that shows in detail how it works.</p>
+<p><img src="/assets/img/posts/fusca-freio-a-disco/freio-dianteiro-fusca.jpg" alt="Image showing Beetle front brake&#x22;"></p>
+<h2 id="practical-brake-repair"><a href="#practical-brake-repair" class="anchor">Practical brake repair</a></h2>
+<p>Brake fluid retains moisture and this causes oxidation and degradation of the internal working parts of the brake. Hence, the need for annual brake fluid change. In order to prolong the life of the brake. In my case it was no different, the beetle had not made this change for two years. And unfortunately, we are not in the habit of using it often. This caused the pistons to lock and, consequently, the front wheels were locked.</p>
+<p>The front caliper pair is original, that is, they were manufactured by Ate. And there are no more original repairs for sale. It took a lot of searching to find them. Current assemblies do not have the ring (6) which prevents the piston from rotating.</p>
+<p>Changing the repair is relatively simple. The worst part is removing the two plungers. Ideally, you can use an air compressor and force them out. However, if you don't have it, you can use your own brake fluid. Put a “lock” in place of the brake disc, to prevent the accidental release of one of the pistons. In parallel, activate the brake pedal, generating their movement. Once removed, the rest of the repair service turns out to be easier. After changing the repairs, bleed the Beetle completely, starting with the wheel furthest from the central system, which would be the right rear wheel. Anyway, I won't go into the full detail of the repair process. There are other materials available that already do the job of elucidating this service very well.</p>
+]]></content:encoded>
+    </item>
+  
+      </channel>
+    </rss>
+  
