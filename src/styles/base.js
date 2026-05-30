@@ -23,6 +23,7 @@ export const PostWrapper = styled.div`
 
 export const PostContainer = styled.div`
   grid-column: 1;
+  min-width: 0;
 
   ${media.desktop`
     grid-column: 2/3;
@@ -40,6 +41,7 @@ export const PostAside = styled.aside`
   ${({ theme }) => css`
     margin: 0 ${theme.spacings.xsmall};
     align-self: start;
+    min-width: 0;
 
     ${media.desktop`
       margin: ${theme.spacings.xsmall} auto;
@@ -242,3 +244,4 @@ export const MainContent = styled.section`
     ${prism}
   `}
 `;
+
