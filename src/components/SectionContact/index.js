@@ -8,6 +8,7 @@ const SectionContact = () => (
       <S.Title>
         <FormattedMessage id="contactTitle" />
       </S.Title>
+      <S.Divider />
       <S.Content>
         <FormattedMessage id="contactContent" />
       </S.Content>

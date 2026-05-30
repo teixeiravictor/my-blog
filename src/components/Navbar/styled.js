@@ -172,7 +172,20 @@ export const NavbarLink = styled.a`
   `}
 `;
 
-export const IconWrapper = styled.div`
-  width: 30px;
-  height: 30px;
+
+export const RssLink = styled.a`
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    color: ${theme.colors.black};
+    transition: ${transitions.COLOR};
+
+    ${media.tablet`
+      margin-left: ${theme.spacings.medium};
+    `}
+
+    &:hover {
+      color: ${theme.colors.darkPrimary};
+    }
+  `}
 `;

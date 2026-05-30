@@ -7,6 +7,8 @@ import { useIntl } from "react-intl";
 import * as S from "./styled";
 import data from "./links";
 
+import { RssFeed } from "@styled-icons/material/RssFeed";
+
 import LocaleSwitcher from "components/LocaleSwitcher";
 import NavbarBurguer from "components/NavbarBurguer";
 
@@ -39,6 +41,9 @@ const Navbar = () => {
               </S.NavbarItem>
             ))}
           </S.NavbarMenu>
+          <S.RssLink href="/feed.xml" title="RSS Feed" rel="noopener noreferrer">
+            <RssFeed size={28} />
+          </S.RssLink>
           <LocaleSwitcher />
           <NavbarBurguer open={open} setOpen={setOpen} />
         </S.Container>

@@ -30,9 +30,9 @@ export default css`
     padding-left: ${theme.spacings.xsmall};
     padding-right: ${theme.spacings.xsmall};
     margin: ${theme.spacings.small} 0;
-    overflow: auto;
-    min-width: 100%;
-    white-space: nowrap;
+    overflow-x: auto;
+    max-width: 100%;
+    white-space: pre;
   }
   :not(pre) > code[class*="language-"],
   pre[class*="language-"] {

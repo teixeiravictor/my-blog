@@ -1,7 +1,7 @@
 import * as S from "./styled";
 
 import links from "./content";
-import Icons from "./Icons";
+import Icons from "./icons";
 
 const SocialLinks = () => (
   <S.SocialList>
